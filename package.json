@@ -1,0 +1,40 @@
+{
+  "name": "docx2gutenberge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "do.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meera/docx2gutenberge.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/meera/docx2gutenberge/issues"
+  },
+  "homepage": "https://github.com/meera/docx2gutenberge#readme",
+  "dependencies": {
+    "argparse": "~1.0.3",
+    "bluebird": "~3.4.0",
+    "jszip": "~2.5.0",
+    "lop": "~0.4.0",
+    "path-is-absolute": "^1.0.0",
+    "sax": "~1.1.1",
+    "underscore": "~1.8.3",
+    "xmlbuilder": "^10.0.0",
+    "clipboardy": "^2.2.0"
+  },
+  "devDependencies": {
+    "browserify": "~13.0.1",
+    "browserify-prepend-licenses": "~1.0.0",
+    "duck": "~0.1.11",
+    "eslint": "2.13.1",
+    "hamjest": "2.13.0",
+    "mocha": "~2.2.5",
+    "temp": "~0.7.0",
+    "uglify-js": "~2.4.8"
+  }
+}
