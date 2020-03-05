@@ -1,8 +1,11 @@
-var mammoth = require("mammoth");
+
+var mammoth = require("./mammoth.js/lib/index");
 const clipboardy = require('clipboardy');
 
 
+console.log('Hello World', process.argv[2]);
 
+const fileName = process.argv[2];
 
 var options = {
     styleMap: [
@@ -19,11 +22,11 @@ var options = {
 //     console.log(html);
 // }).done();
 
-mammoth.converToGutenberge({path: "testdoc.docx"})
+mammoth.converToGutenberge({path: fileName})
     .then(function(result){
         var text = result.value; // The raw text
         var messages = result.messages;
-        console.log('Text ', result);
+        //console.log('Text ', result);
 
         clipboardy.writeSync(result);
 

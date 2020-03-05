@@ -40,6 +40,12 @@ function enclose(element, startTag, endTag) {
     return output;
 }
 
+var doubleLine = '<!-- wp:block {"ref":921} /-->\n';
+var singleLine = '<!-- wp:block {"ref":920} /-->\n';
+// <!-- wp:paragraph {"align":"center"} -->
+// <p class="has-text-align-center"><em>Relevance in Three Moves</em></p>
+// <!-- /wp:paragraph -->'
+
 var newLines = 0; 
 function convertElementToBlocks(element) {
     //return 'Foo';
@@ -49,18 +55,52 @@ function convertElementToBlocks(element) {
         case "paragraph": {
 
             output =  element.children.map(convertElementToBlocks).join('');
-            if (output && (output.trim().length != 0) ) {
-                if (newLines > 2) {
-                    newLines = 0;
-                    output = 'New Lines **' + output; 
-                }
-                return '<!-- wp:paragraph -->\n' + 
-                   output + 
-                  '\n <!-- /wp:paragraph -->\n';
-            } else {
+            //console.log('Output  ', output.trim(), ' Trim length ', output.trim().length);
+            if ( output.trim().length === 0 ){
+
                 newLines++;
                 return '';
             }
+
+           /* if( element.alignment === "center") { 
+                output = '<!-- wp:paragraph {"align":"center"} -->\n' +
+                '<p class="has-text-align-center">' + output + '</p>\n' +
+                '<!-- /wp:paragraph -->\n';
+                
+            } else {
+
+                if ( output.startsWith("...") || (output.startsWith("*"))) {
+                    output  = '<!-- wp:paragraph {"className": "hang" } -->\n' +
+                        '<p class="hang">' + output + '</p>\n' +
+                      '<!-- /wp:paragraph -->\n';
+                      return output;
+                } else {
+
+                }
+
+
+            }
+            */
+
+            output = "<!-- wp:paragraph -->" + "\n" + 
+            '<p>' + output  + '</p>' + '\n' +
+            "<!-- /wp:paragraph -->\n" +
+            "\n";
+
+
+
+            
+            if (newLines > 2) {
+                newLines = 0;
+                return doubleLine + '\n' + output; 
+            } 
+
+            if( newLines === 2) {
+                newLines = 0;
+                return  singleLine + '\n' + output;
+            } 
+            
+            return output;
         }
         case "run": {
             var run = element;
@@ -81,11 +121,19 @@ function convertElementToBlocks(element) {
             // }
             if (run.isItalic) {
                 //console.log( 'Run I', run);
-                return '<em>' + element.children.map(convertElementToBlocks) +  '</em>';
+                output = element.children.map(convertElementToBlocks).join('');
+                if ( output.trim().length === 0 )
+                    return "";
+                else 
+                    return '<em>' + output +  '</em>';
                 
             }
             if (run.isBold) {
-                return '<strong>' + element.children.map(convertElementToBlocks) +  '</strong>';
+                output = element.children.map(convertElementToBlocks).join('');
+                if ( output.trim().length === 0 )
+                    return "";
+                else 
+                    return '<strong>' + output +  '</strong>';
 
 
             }
@@ -107,6 +155,7 @@ function convertElementToBlocks(element) {
             // }
 
         }
+        
     }
     if (element.children) {
         //console.log('inside children');
