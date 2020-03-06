@@ -40,11 +40,30 @@ function enclose(element, startTag, endTag) {
     return output;
 }
 
+function countWhiteSpaces(inputStr) {
+    var whiteSpaces = 0; 
+    for (i=0; i< inputStr.length; i++ ) {
+        if( inputStr[i] === ' ') {
+            whiteSpaces = whiteSpaces + 1;
+        } else if (inputStr[i] === '/t') {
+            whiteSpaces = whiteSpaces + 4;
+        } else  {
+            break;
+        }
+    }
+    return whiteSpaces;
+
+}
 var doubleLine = '<!-- wp:block {"ref":921} /-->\n';
 var singleLine = '<!-- wp:block {"ref":920} /-->\n';
 // <!-- wp:paragraph {"align":"center"} -->
 // <p class="has-text-align-center"><em>Relevance in Three Moves</em></p>
 // <!-- /wp:paragraph -->'
+
+// <!-- wp:paragraph {"align":"center","className":"indent"} -->
+// <p class="has-text-align-center indent">Foobar</p>
+// <!-- /wp:paragraph -->
+
 
 var newLines = 0; 
 function convertElementToBlocks(element) {
@@ -53,8 +72,16 @@ function convertElementToBlocks(element) {
 
     switch ( element.type) {
         case "paragraph": {
+            var className = [];
+            var paraString = [];
 
             output =  element.children.map(convertElementToBlocks).join('');
+            if (output ) {
+                numberOfSpaces = countWhiteSpaces( output);
+                console.log( 'oUTPUT ' , output, 'Spaces ' , numberOfSpaces);
+
+            }
+
             //console.log('Output  ', output.trim(), ' Trim length ', output.trim().length);
             if ( output.trim().length === 0 ){
 
@@ -62,12 +89,14 @@ function convertElementToBlocks(element) {
                 return '';
             }
 
-           /* if( element.alignment === "center") { 
-                output = '<!-- wp:paragraph {"align":"center"} -->\n' +
-                '<p class="has-text-align-center">' + output + '</p>\n' +
-                '<!-- /wp:paragraph -->\n';
+           if( element.alignment === "center") { 
+                className.push("has-text-align-center");
+                paraString.push( '"align":"center"');
                 
-            } else {
+            } 
+           
+            
+            /*else {
 
                 if ( output.startsWith("...") || (output.startsWith("*"))) {
                     output  = '<!-- wp:paragraph {"className": "hang" } -->\n' +
@@ -82,21 +111,26 @@ function convertElementToBlocks(element) {
             }
             */
 
-            output = "<!-- wp:paragraph -->" + "\n" + 
-            '<p>' + output  + '</p>' + '\n' +
-            "<!-- /wp:paragraph -->\n" +
-            "\n";
+            if ( className.length >0 ) {
+                output =  "<!-- wp:paragraph " + "{" + paraString.join(',') + "}" + " -->" + "\n" + 
+                    '<p class="' + className.join(' ') + '">' + output  + '</p>' + '\n' +
+                "<!-- /wp:paragraph -->\n" +
+                "\n";
+            } else {
+                output = "<!-- wp:paragraph -->" + "\n" + 
+                '<p>' + output  + '</p>' + '\n' +
+                "<!-- /wp:paragraph -->\n" +
+                "\n";
+            }
 
-
+            newLines = 0;
 
             
             if (newLines > 2) {
-                newLines = 0;
                 return doubleLine + '\n' + output; 
             } 
 
             if( newLines === 2) {
-                newLines = 0;
                 return  singleLine + '\n' + output;
             } 
             
@@ -119,25 +153,24 @@ function convertElementToBlocks(element) {
             // if (run.verticalAlignment === documents.verticalAlignment.superscript) {
             //     paths.push(htmlPaths.element("sup", {}, {fresh: false}));
             // }
+
+            output = element.children.map(convertElementToBlocks).join('');
+            if ( output.trim().length === 0 )
+                return "";
+            var pre = '';
+            var post = '';
+
             if (run.isItalic) {
-                //console.log( 'Run I', run);
-                output = element.children.map(convertElementToBlocks).join('');
-                if ( output.trim().length === 0 )
-                    return "";
-                else 
-                    return '<em>' + output +  '</em>';
-                
+                pre = pre + '<em>';    
+                post = '</em>' + post;            
             }
             if (run.isBold) {
-                output = element.children.map(convertElementToBlocks).join('');
-                if ( output.trim().length === 0 )
-                    return "";
-                else 
-                    return '<strong>' + output +  '</strong>';
+                pre = pre + '<strong>';    
+                post = '</strong>' + post;     
 
 
             }
-            return element.children.map(convertElementToBlocks) ;
+            return  pre + output + post;
         }
         case "text": {
             //console.log( element);
