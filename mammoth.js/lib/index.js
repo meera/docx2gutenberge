@@ -42,10 +42,11 @@ function enclose(element, startTag, endTag) {
 
 function countWhiteSpaces(inputStr) {
     var whiteSpaces = 0; 
-    for (i=0; i< inputStr.length; i++ ) {
+    for (var i=0; i< inputStr.length; i++ ) {
+        
         if( inputStr[i] === ' ') {
             whiteSpaces = whiteSpaces + 1;
-        } else if (inputStr[i] === '/t') {
+        } else if (inputStr[i] == '/t') {
             whiteSpaces = whiteSpaces + 4;
         } else  {
             break;
@@ -123,17 +124,19 @@ function convertElementToBlocks(element) {
                 "\n";
             }
 
-            newLines = 0;
 
             
             if (newLines > 2) {
+                newLines = 0;
                 return doubleLine + '\n' + output; 
             } 
 
             if( newLines === 2) {
+                newLines = 0;
                 return  singleLine + '\n' + output;
             } 
-            
+            newLines = 0;
+
             return output;
         }
         case "run": {
@@ -177,15 +180,19 @@ function convertElementToBlocks(element) {
             return element.value;
         }
         case "document": {
-            return element.children.map(convertElementToBlocks).join('');
-            // var output = "";
-            // const blocks = element.children.map(convertElementToBlocks);
-            // for (i=0; i< blocks.length; i++ ) {
-            //     if( blocks[i] != 'Foobar') 
-            //         output = output + blocks[i]
-            //     else
-            //         break;
-            // }
+            //return element.children.map(convertElementToBlocks).join('');
+            var output = "";
+            var regex = new RegExp("Protection of Materials and Concepts");
+
+            const blocks = element.children.map(convertElementToBlocks);
+
+            for (i=0; i< blocks.length; i++ ) {
+                if( ! regex.test(blocks[i] ) ) 
+                    output = output + blocks[i]
+                else
+                    break;
+            }
+            return output;
 
         }
         
