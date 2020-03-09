@@ -31,6 +31,7 @@ function converToGutenberge(input, options) {
         });
 }
 
+// indent: { start: '709', end: null, firstLine: null, hanging: '0' }
 function enclose(element, startTag, endTag) {
 
     //console.log('inside enclose');
@@ -42,11 +43,12 @@ function enclose(element, startTag, endTag) {
 
 function countWhiteSpaces(inputStr) {
     var whiteSpaces = 0; 
-    for (var i=0; i< inputStr.length; i++ ) {
+    for (let i=0; i< inputStr.length; i++ ) {
         
-        if( inputStr[i] === ' ') {
+        if( inputStr[i] == ' ') {
+
             whiteSpaces = whiteSpaces + 1;
-        } else if (inputStr[i] == '/t') {
+        } else if (inputStr[i] == '\t') {
             whiteSpaces = whiteSpaces + 4;
         } else  {
             break;
@@ -77,11 +79,11 @@ function convertElementToBlocks(element) {
             var paraString = [];
 
             output =  element.children.map(convertElementToBlocks).join('');
-            if (output ) {
+            /*if (output ) {
                 numberOfSpaces = countWhiteSpaces( output);
-                console.log( 'oUTPUT ' , output, 'Spaces ' , numberOfSpaces);
+                console.log( 'Out:' , output, 'Spaces ' , numberOfSpaces);
 
-            }
+            }*/
 
             //console.log('Output  ', output.trim(), ' Trim length ', output.trim().length);
             if ( output.trim().length === 0 ){
@@ -89,14 +91,60 @@ function convertElementToBlocks(element) {
                 newLines++;
                 return '';
             }
+            const indent = element.indent.start  ? element.indent.start: '0';
 
+            //console.log(' Element Indent ', element.indent.start  ? element.indent.start: '0');
+
+        
            if( element.alignment === "center") { 
                 className.push("has-text-align-center");
                 paraString.push( '"align":"center"');
                 
             } 
            
-            
+            if ( output.startsWith("…") || (output.startsWith("*") || (output.startsWith('e.g.')))) {
+                if (indent >= 1800 ) {
+                className.push("hang5");
+                paraString.push( '"className":"hang5"');
+                } else if ( indent >= 1440){
+                    className.push("hang4");
+                    paraString.push( '"className":"hang4"');
+                } else if (indent >= 1080) {
+                    className.push("hang3");
+                    paraString.push( '"className":"hang3"');
+                } else if ( indent >= 720 ) {
+                    className.push("hang2");
+                    paraString.push( '"className":"hang2"');
+                } else if ( indent >= 360) {
+                    className.push("hang");
+                    paraString.push( '"className":"hang"');
+                } else {
+                    className.push("hang0");
+                    paraString.push( '"className":"hang0"');
+                }
+
+            } else
+            if ( output.startsWith("#")) {
+                className.push("hash");
+                paraString.push( '"className":"hash"');
+            } else {
+                if (indent >= 1800 ) {
+                    className.push("indent5");
+                    paraString.push( '"className":"indent5"');
+                    } else if ( indent >= 1440){
+                        className.push("indent4");
+                        paraString.push( '"className":"indent4"');
+                    } else if (indent >= 1080) {
+                        className.push("indent3");
+                        paraString.push( '"className":"indent3"');
+                    } else if ( indent >= 720 ) {
+                        className.push("indent2");
+                        paraString.push( '"className":"indent2"');
+                    } else if ( indent >= 360) {
+                        className.push("indent");
+                        paraString.push( '"className":"indent"');
+                    } 
+            }
             /*else {
 
                 if ( output.startsWith("...") || (output.startsWith("*"))) {
@@ -158,8 +206,10 @@ function convertElementToBlocks(element) {
             // }
 
             output = element.children.map(convertElementToBlocks).join('');
-            if ( output.trim().length === 0 )
-                return "";
+            
+            if ( output.trim().length === 0 ){
+                return output;
+            }
             var pre = '';
             var post = '';
 
@@ -173,10 +223,10 @@ function convertElementToBlocks(element) {
 
 
             }
+
             return  pre + output + post;
         }
         case "text": {
-            //console.log( element);
             return element.value;
         }
         case "document": {
