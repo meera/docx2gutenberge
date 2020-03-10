@@ -41,22 +41,7 @@ function enclose(element, startTag, endTag) {
     return output;
 }
 
-function countWhiteSpaces(inputStr) {
-    var whiteSpaces = 0; 
-    for (let i=0; i< inputStr.length; i++ ) {
-        
-        if( inputStr[i] == ' ') {
 
-            whiteSpaces = whiteSpaces + 1;
-        } else if (inputStr[i] == '\t') {
-            whiteSpaces = whiteSpaces + 4;
-        } else  {
-            break;
-        }
-    }
-    return whiteSpaces;
-
-}
 var doubleLine = '<!-- wp:block {"ref":921} /-->\n';
 var singleLine = '<!-- wp:block {"ref":920} /-->\n';
 // <!-- wp:paragraph {"align":"center"} -->
@@ -101,8 +86,12 @@ function convertElementToBlocks(element) {
                 paraString.push( '"align":"center"');
                 
             } 
+            var numberedListRegEx = new RegExp("^\\d+.");
            
-            if ( output.startsWith("…") || (output.startsWith("*") || (output.startsWith('e.g.')))) {
+            if ( output.startsWith("…") || 
+                (output.startsWith("*") || 
+                (output.startsWith('e.g.') || 
+                (numberedListRegEx.test(output))))) {
                 if (indent >= 1800 ) {
                 className.push("hang5");
                 paraString.push( '"className":"hang5"');
