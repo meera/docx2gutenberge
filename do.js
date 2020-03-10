@@ -3,7 +3,7 @@ var mammoth = require("./mammoth.js/lib/index");
 const clipboardy = require('clipboardy');
 
 
-console.log('Hello World', process.argv[2]);
+console.log('Working on ', process.argv[2], '....');
 
 const fileName = process.argv[2];
 
@@ -31,5 +31,9 @@ mammoth.converToGutenberge({path: fileName})
         clipboardy.writeSync(result);
 
     })
-    .done();
+    .done( () => {
+
+        console.log('Done!');
+        console.log('Output is in your clipboard. \nGo to Wordpress site, create new Topic and \n Simply Paste the content!')
+    });
 

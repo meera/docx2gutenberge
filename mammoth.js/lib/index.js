@@ -41,7 +41,41 @@ function enclose(element, startTag, endTag) {
     return output;
 }
 
+function isHash( output) {
+    if ( output.startsWith("#") || 
+            output.startsWith("<em>#") ||
+                 output.startsWith("<strong>#") || 
+                 output.startsWith("<strong><em>#"))
 
+        return true;
+    else
+        return false;
+}
+
+function isHang( output ) {
+    var numberedListRegEx = new RegExp("^\\d+.");
+
+    if( output.startsWith("…") || 
+        output.startsWith("<em>…") || 
+        output.startsWith("<strong>…") || 
+        output.startsWith("<strong><em>…") || 
+
+        output.startsWith("*") || 
+        output.startsWith("<em>*") || 
+        output.startsWith("<strong>*") || 
+        output.startsWith("<strong><em>*") || 
+
+        output.startsWith('e.g.') || 
+        output.startsWith('<em>e.g.') || 
+        output.startsWith('<strong>e.g.') || 
+        output.startsWith('<strong><em>e.g.') || 
+
+        (numberedListRegEx.test(output))) // Test for numbered List
+        return true;
+    else
+        return false;
+
+}
 var doubleLine = '<!-- wp:block {"ref":921} /-->\n';
 var singleLine = '<!-- wp:block {"ref":920} /-->\n';
 // <!-- wp:paragraph {"align":"center"} -->
@@ -86,12 +120,8 @@ function convertElementToBlocks(element) {
                 paraString.push( '"align":"center"');
                 
             } 
-            var numberedListRegEx = new RegExp("^\\d+.");
            
-            if ( output.startsWith("…") || 
-                (output.startsWith("*") || 
-                (output.startsWith('e.g.') || 
-                (numberedListRegEx.test(output))))) {
+            if ( isHang(output)) {
                 if (indent >= 1800 ) {
                 className.push("hang5");
                 paraString.push( '"className":"hang5"');
@@ -113,9 +143,29 @@ function convertElementToBlocks(element) {
                 }
 
             } else
-            if ( output.startsWith("#")) {
-                className.push("hash");
-                paraString.push( '"className":"hash"');
+            if ( isHash(output)) {
+                if (indent >= 1800 ) {
+                    className.push("hash6");
+                    paraString.push( '"className":"hash6"');
+                    } else if ( indent >= 1440){
+                        className.push("hash5");
+                        paraString.push( '"className":"hash5"');
+                    } else if (indent >= 1080) {
+                        className.push("hash4");
+                        paraString.push( '"className":"hash4"');
+                    } else if ( indent >= 720 ) {
+                        className.push("hash3");
+                        paraString.push( '"className":"hash3"');
+                    } else if ( indent >= 360) {
+                        className.push("hash2");
+                        paraString.push( '"className":"hash2"');
+                    } else 
+                        {
+                            className.push("hash");
+                            paraString.push( '"className":"hash"'); 
+                    }
+               
+
             } else {
                 if (indent >= 1800 ) {
                     className.push("indent5");
@@ -134,20 +184,7 @@ function convertElementToBlocks(element) {
                         paraString.push( '"className":"indent"');
                     } 
             }
-            /*else {
-
-                if ( output.startsWith("...") || (output.startsWith("*"))) {
-                    output  = '<!-- wp:paragraph {"className": "hang" } -->\n' +
-                        '<p class="hang">' + output + '</p>\n' +
-                      '<!-- /wp:paragraph -->\n';
-                      return output;
-                } else {
-
-                }
-
-
-            }
-            */
+            
 
             if ( className.length >0 ) {
                 output =  "<!-- wp:paragraph " + "{" + paraString.join(',') + "}" + " -->" + "\n" + 
@@ -203,15 +240,17 @@ function convertElementToBlocks(element) {
             var post = '';
 
             if (run.isItalic) {
-                pre = pre + '<em>';    
-                post = '</em>' + post;            
+                pre =  '<em>';    
+                post = '</em>';            
             }
+            
             if (run.isBold) {
-                pre = pre + '<strong>';    
-                post = '</strong>' + post;     
+                pre = '<strong>' + pre;    
+                post = post + '</strong>' ;     
 
 
             }
+
 
             return  pre + output + post;
         }
