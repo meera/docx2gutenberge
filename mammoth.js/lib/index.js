@@ -98,20 +98,22 @@ function convertElementToBlocks(element) {
             var paraString = [];
 
             output =  element.children.map(convertElementToBlocks).join('');
-            /*if (output ) {
-                numberOfSpaces = countWhiteSpaces( output);
-                console.log( 'Out:' , output, 'Spaces ' , numberOfSpaces);
-
-            }*/
-
-            //console.log('Output  ', output.trim(), ' Trim length ', output.trim().length);
             if ( output.trim().length === 0 ){
 
                 newLines++;
                 return '';
             }
-            const indent = element.indent.start  ? element.indent.start: '0';
+            let indent = element.indent.start  ? element.indent.start: 0;
 
+            const hanging = element.indent.hanging ? element.indent.hanging: 0;
+            const firstLine =  element.indent.firstLine? element.indent.firstLine: 0;
+
+            if( hanging > 0 ){
+                indent = indent - hanging;
+            } else if ( firstLine >0 ) {
+                indent = indent + firstLine;
+            }
+            
             //console.log(' Element Indent ', element.indent.start  ? element.indent.start: '0');
 
         
@@ -228,11 +230,10 @@ function convertElementToBlocks(element) {
             //     paths.push(htmlPaths.element("sub", {}, {fresh: false}));
             // }
             // if (run.verticalAlignment === documents.verticalAlignment.superscript) {
-            //     paths.push(htmlPaths.element("sup", {}, {fresh: false}));
+            //     paths.push(  htmlPaths.element("sup", {}, {fresh: false}));
             // }
 
             output = element.children.map(convertElementToBlocks).join('');
-            
             if ( output.trim().length === 0 ){
                 return output;
             }
@@ -256,6 +257,9 @@ function convertElementToBlocks(element) {
         }
         case "text": {
             return element.value;
+        }
+        case "tab": {
+            return "   ";
         }
         case "document": {
             //return element.children.map(convertElementToBlocks).join('');
