@@ -34,6 +34,6 @@ mammoth.converToGutenberge({path: fileName})
     .done( () => {
 
         console.log('Done!');
-        console.log('Output is in your clipboard. \nGo to Wordpress site, create new Topic and \n Simply Paste the content!')
+        console.log('Output is in your clipboard. \nGo to Wordpress site, create new Topic and Paste the content!')
     });
 
