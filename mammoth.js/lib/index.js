@@ -19,8 +19,21 @@ exports.embedStyleMap = embedStyleMap;
 exports.readEmbeddedStyleMap = readEmbeddedStyleMap;
 
 
-
 exports.converToGutenberge = converToGutenberge;
+
+function isPresent( input, stringToTest ) {
+    if( RegExp(stringToTest).test(input)) {
+        console.log('Warning: This file contains following str *** ', stringToTest);
+  
+    }
+}
+function testStringsToReplace(output) {
+
+    isPresent(output, "The Business Professional's Course");
+    isPresent(output, "Aji Space");
+    isPresent(output, "@theajinetwork.com");
+    isPresent(output, "Aji Source");
+}
 
 function converToGutenberge(input, options) {
      return unzip.openZip(input)
@@ -53,7 +66,7 @@ function isHash( output) {
 }
 
 function isHang( output ) {
-    var numberedListRegEx = new RegExp("^\\d+.");
+    var numberedListRegEx = new RegExp("(^\\d+\\.)|(^<em>\\d+\\.)|(^<strong>\\d+\\.)|(^<strong><em>\\d+\\.)");
 
     if( output.startsWith("…") || 
         output.startsWith("<em>…") || 
@@ -86,7 +99,14 @@ var singleLine = '<!-- wp:block {"ref":920} /-->\n';
 // <p class="has-text-align-center indent">Foobar</p>
 // <!-- /wp:paragraph -->
 
-
+// WP-Heading
+// <!-- wp:heading {"align":"center","level":4} -->
+// <h4 class="has-text-align-center">Relevance in Three Moves</h4>
+// <!-- /wp:heading -->
+// styleId: "DocumentTitle"
+// styleName: "Document Title"
+// styleName "Heading 2"
+// styleName "Pull Quote"
 var newLines = 0; 
 function convertElementToBlocks(element) {
     //return 'Foo';
@@ -102,6 +122,52 @@ function convertElementToBlocks(element) {
 
                 newLines++;
                 return '';
+            }
+
+            // See the style
+
+            if( (element.styleName === "Document Title") ||  
+            ((element.styleName === "Heading 2") && (element.alignment === "center"))) {
+                output =  '<!-- wp:heading {"align":"center","level":4} -->\n' + 
+                            '<h4 class="has-text-align-center">' + 
+                            output + '</h4>' + '\n' + 
+                            '<!-- /wp:heading -->\n' + 
+                            "\n";
+
+                // Heading needs no further processing.
+                if (newLines > 2) {
+                    newLines = 0;
+                    return doubleLine + '\n' + output; 
+                } 
+    
+                if( newLines === 2) {
+                    newLines = 0;
+                    return  singleLine + '\n' + output;
+                } 
+                newLines = 0;
+                return output; 
+            }
+
+            if (element.styleName === "Heading 2") { 
+                output = '<!-- wp:heading {"level":4} -->\n' + 
+                             '<h4>' + output + '</h4>\n' +
+                            '<!-- /wp:heading -->\n' +
+                            '\n';
+                if (newLines > 2) {
+                    newLines = 0;
+                    return doubleLine + '\n' + output; 
+                } 
+    
+                if( newLines === 2) {
+                    newLines = 0;
+                    return  singleLine + '\n' + output;
+                } 
+                newLines = 0;
+                return output;
+            }
+
+            if( element.styleName === "Pull Quote" ) { 
+                output = '<em>' + output + '</em>';
             }
             let indent = element.indent.start  ? element.indent.start: 0;
 
@@ -269,8 +335,12 @@ function convertElementToBlocks(element) {
             const blocks = element.children.map(convertElementToBlocks);
 
             for (i=0; i< blocks.length; i++ ) {
-                if( ! regex.test(blocks[i] ) ) 
+
+                if( ! regex.test(blocks[i] ) ) {
+                    testStringsToReplace(blocks[i]);
+
                     output = output + blocks[i]
+                }
                 else
                     break;
             }
