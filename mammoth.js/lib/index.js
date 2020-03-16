@@ -21,6 +21,15 @@ exports.readEmbeddedStyleMap = readEmbeddedStyleMap;
 
 exports.converToGutenberge = converToGutenberge;
 
+const INDENT1 = 360;
+const INDENT2 = 720;
+const INDENT3 = 1080;
+const INDENT4 = 1440;
+const INDENT5 = 1800;
+const INDENT6 = 2160;
+const INDENT7 = 2520;
+const INDENT8 = 2880;
+
 function isPresent( input, stringToTest ) {
     if( RegExp(stringToTest).test(input)) {
         console.log('Warning: This file contains following str *** ', stringToTest);
@@ -190,7 +199,19 @@ function convertElementToBlocks(element) {
             } 
            
             if ( isHang(output)) {
-                if (indent >= 1800 ) {
+                if( indent >= INDENT8 ) {
+                    //INDENT6 = 2160
+                    className.push("hang8");
+                    paraString.push( '"className":"hang8"');
+                } else if( indent >= INDENT7 ) {
+                    //INDENT6 = 2160
+                    className.push("hang7");
+                    paraString.push( '"className":"hang7"');
+                } else  if( indent >= INDENT6 ) {
+                    //INDENT6 = 2160
+                    className.push("hang6");
+                    paraString.push( '"className":"hang6"');
+                } else if (indent >= 1800 ) {
                 className.push("hang5");
                 paraString.push( '"className":"hang5"');
                 } else if ( indent >= 1440){
@@ -212,7 +233,13 @@ function convertElementToBlocks(element) {
 
             } else
             if ( isHash(output)) {
-                if (indent >= 1800 ) {
+                 if (indent >= INDENT7 ) {
+                    className.push("hash8");
+                    paraString.push( '"className":"hash8"');
+                    } else if (indent >= INDENT6 ) {
+                    className.push("hash7");
+                    paraString.push( '"className":"hash7"');
+                    } else if (indent >= 1800 ) {
                     className.push("hash6");
                     paraString.push( '"className":"hash6"');
                     } else if ( indent >= 1440){
@@ -235,7 +262,16 @@ function convertElementToBlocks(element) {
                
 
             } else {
-                if (indent >= 1800 ) {
+                if (indent >= INDENT8 ) {
+                    className.push("indent8");
+                    paraString.push( '"className":"indent8"');
+                    } else if (indent >= INDENT7 ) {
+                    className.push("indent7");
+                    paraString.push( '"className":"indent7"');
+                    } else if (indent >= INDENT6 ) {
+                    className.push("indent6");
+                    paraString.push( '"className":"indent6"');
+                    } else if (indent >= 1800 ) {
                     className.push("indent5");
                     paraString.push( '"className":"indent5"');
                     } else if ( indent >= 1440){
