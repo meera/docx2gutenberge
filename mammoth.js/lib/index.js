@@ -75,7 +75,8 @@ function isHash( output) {
 }
 
 function isHang( output ) {
-    var numberedListRegEx = new RegExp("(^\\d+\\.)|(^<em>\\d+\\.)|(^<strong>\\d+\\.)|(^<strong><em>\\d+\\.)");
+    var numberedListRegEx = new RegExp("(^\\d+\\.)|(^<em>\\d+\\.)|(^<strong>\\d+\\.)|(^<strong><em>\\d+\\.)"); // Tests for 1. 2. 3.
+    var alphaListRegEx = new RegExp("(^[a-zA-Z]\\.)|(^<em>[a-zA-Z]\\.)|(^<strong>[a-zA-Z]\\.)|(^<strong><em>[a-zA-Z]\\.)"); // Tests for a. b. A. etc
 
     if( output.startsWith("…") || 
         output.startsWith("<em>…") || 
@@ -92,7 +93,9 @@ function isHang( output ) {
         output.startsWith('<strong>e.g.') || 
         output.startsWith('<strong><em>e.g.') || 
 
-        (numberedListRegEx.test(output))) // Test for numbered List
+        numberedListRegEx.test(output) || 
+        alphaListRegEx.test(output) // Test for numbered List
+        ) 
         return true;
     else
         return false;
