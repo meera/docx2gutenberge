@@ -10,7 +10,7 @@ This is not a generic purposed script. It is highly customized to fit one specia
 # Install 
 
 Step 1) You will need to have npm and node installed on your machine. 
-You can download npm+node from https://nodejs.org/en/
+You can download npm+node from [nodejs.org](https://nodejs.org/en/)
 
 Step 2) You will need git - git is preinstalled on all Mac machines. If you don't have it you can install on github.
 
