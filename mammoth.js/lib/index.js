@@ -119,6 +119,12 @@ var singleLine = '<!-- wp:block {"ref":920} /-->\n';
 // styleName: "Document Title"
 // styleName "Heading 2"
 // styleName "Pull Quote"
+
+
+// <!-- wp:heading {"align":"center","level":4} -->
+// <h4 class="has-text-align-center">Part #1 of The Strategy</h4>
+// <!-- /wp:heading -->
+
 var newLines = 0; 
 function convertElementToBlocks(element) {
     //return 'Foo';
@@ -139,7 +145,13 @@ function convertElementToBlocks(element) {
             // See the style
 
             if( (element.styleName === "Document Title") ||  
+                (element.styleName === 'Subhead centered italics') || 
+                (element.styleName === 'Section Subtitle') ||
             ((element.styleName === "Heading 2") && (element.alignment === "center"))) {
+
+                if(output.startsWith("<em>") && output.endsWith("</em>"))
+                    output.slice( 4, output.length - 5)    
+
                 output =  '<!-- wp:heading {"align":"center","level":4} -->\n' + 
                             '<h4 class="has-text-align-center">' + 
                             output + '</h4>' + '\n' + 
@@ -160,7 +172,15 @@ function convertElementToBlocks(element) {
                 return output; 
             }
 
-            if (element.styleName === "Heading 2") { 
+            if ((element.styleName === "Heading 2") || 
+                (element.styleName === 'Section Subtitle') ||
+                (element.styleName === 'Subhead left bold italics') || 
+                (element.styleName === 'Subhead left italics')
+                ) { 
+
+                if(output.startsWith("<em>") && output.endsWith("</em>"))
+                    output.slice( 4, output.length - 5);
+
                 output = '<!-- wp:heading {"level":4} -->\n' + 
                              '<h4>' + output + '</h4>\n' +
                             '<!-- /wp:heading -->\n' +
@@ -181,6 +201,8 @@ function convertElementToBlocks(element) {
             if( element.styleName === "Pull Quote" ) { 
                 output = '<em>' + output + '</em>';
             }
+                
+        
             let indent = element.indent.start  ? element.indent.start: 0;
 
             const hanging = element.indent.hanging ? element.indent.hanging: 0;
