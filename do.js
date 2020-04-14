@@ -1,11 +1,21 @@
 
 var mammoth = require("./mammoth.js/lib/index");
 const clipboardy = require('clipboardy');
+var path = require('path');
 
+var fs = require('fs');
 
 console.log('Working on ', process.argv[2], '....');
 
+
 const fileName = process.argv[2];
+
+
+var fileParsed = path.parse(fileName);
+
+var outputFileName =  fileParsed.dir + '/' + fileParsed.name + '.xml';
+console.log('Base Name ', outputFileName);
+
 
 var options = {
     styleMap: [
@@ -22,6 +32,7 @@ var options = {
 //     console.log(html);
 // }).done();
 
+
 mammoth.converToGutenberge({path: fileName})
     .then(function(result){
         var text = result.value; // The raw text
@@ -29,6 +40,11 @@ mammoth.converToGutenberge({path: fileName})
         //console.log('Text ', result);
 
         clipboardy.writeSync(result);
+        fs.writeFile(outputFileName, result, function (err) {
+            if (err) throw err;
+            console.log('Output saved into !' , outputFileName);
+          });
+        
 
     })
     .done( () => {
