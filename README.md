@@ -5,8 +5,8 @@ This is not a generic purposed script. It is highly customized to fit one specia
 
 * Italic for Header is retained.
 * Column layout are not automatically created.
-* .doc format is not supported.
-
+* .doc format is not supported - You must export the .doc document to .docx document.
+* Watch out for O.K. Strings.. They get formated as 'hash'
 # Install 
 
 Step 1) You will need to have npm and node installed on your machine. 
@@ -22,6 +22,8 @@ git clone https://github.com/meera/docx2gutenberge.git
 
 Step 4) now  install the dependencies
 ```
+
+cd docx2gutenberge
 npm install
 ```
 
@@ -39,4 +41,5 @@ node do.js <filename.docx>
 Credits:
 https://www.npmjs.com/package/mammoth
 
-Thank you mammoth.js! 
+
+- Thank you!
