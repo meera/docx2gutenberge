@@ -13,7 +13,10 @@ const fileName = process.argv[2];
 
 var fileParsed = path.parse(fileName);
 
-var outputFileName =  fileParsed.dir + '/' + fileParsed.name + '.xml';
+fileParsed.dir.length
+var outputFileName =  fileParsed.dir.length > 0 ? 
+            fileParsed.dir + '/' + fileParsed.name + '.xml'
+            : fileParsed.name + '.xml';
 console.log('Base Name ', outputFileName);
 
 
